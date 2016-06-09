@@ -1,0 +1,20 @@
+1、NDK配置
+先下载，解压，然后在Eclipse中设置NDK的路径（2个）
+windows - preference - android - ndk - ndk路径
+c/c++ - build - environment - add - "NDKROOT" - ndk路径
+
+2、OpenCV 2.4
+把\sdk\native\libs中的armeabi和armeabi-v7a文件夹复制到项目的libs下
+http://www.opencv.org.cn/forum.php?mod=viewthread&tid=28146
+//通过opencv引擎服务加载并初始化opencv类库，所谓opencv引擎服务
+                //但是运行时要求安装opencv manager，所以放弃这个方法，采取其他加载方法
+                //OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_10, this, mLoaderCallback);
+                 
+                 
+                 if(OpenCVLoader.initDebug()){ //默认加载opencv_java.so库
+                        mLoaderCallback.onManagerConnected( LoaderCallbackInterface.SUCCESS);
+                         //加载依赖opencv_java.so的jni库，名字是 libopencv_java.so
+                         System.loadLibrary("opencv_java");
+                 }
+
+你不要把.so文件直接放到libs目录下一定要到OpenCV-2.4.10-android-sdk\sdk\native\libs 带着armeabi 目录或者armeabi-v7a目录都拷贝到eclipse工程文件的libs目录下，然后你会在bin下发现apk文件，用解压缩软甲打开会看到lib目录就说明已经把类库都打包好了
