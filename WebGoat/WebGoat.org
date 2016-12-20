@@ -1,0 +1,5 @@
+Congratulations! Access to file allowed
+* ==> /.extract/webapps/WebGoat/WEB-INF/spring-security.xml
+* Congratulations. You have successfully completed this lesson.
+
+上网百度才知道使用的是spring-security.xml
