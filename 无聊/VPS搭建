@@ -1,0 +1,65 @@
+ 4.1      VPN简介
+对于未越狱的iOS来说，VPN是唯一支持全局代理的方式。需要搭建服务器或者购买VPN账号。免费账号都不怎么好找，VPN最近也有被墙的。所以还是自搭服务器较好，比如使用Bandwagon可以修改IP。
+VPN一般各设备和操作系统都会自带客户端，只要输入VPN服务器地址，用户名/密码即可
+ 
+ 
+Windows电脑VPN设置
+
+　　VPN没有客户端，在电脑上进行几个配置即可，打开控制面板、点击“查看网络状态和任务”进入网络和共享中心，点击“设置新的连接或网络”，选择“连接到工作区”，单击“下一步”按钮，在“您想如何连接？”选项中选择“使用我的虚拟专用网络（VPN）”，单击“下一步”按钮，公司名随便写，下一步“不拨初始连接”，接下来的主机名(地址)，输入主机地址后完成VPN创建，用户、密码选择为自己的帐号密码，然后点击“创建”按钮即可完成创建。
+
+　　在“网络连接”里双击这个VPN，此时会弹出一个连接VPN的用户登录窗口，输入你的VPN帐号和密码，并点击“连接”。连接成功后会在屏幕右下角的任务栏会有一个VPN连接的图标，这时就可以用VPN连接来上网了。
+
+　　iOS手机VPN设置
+
+　　1，点击手机中的设置-通用-VPN-添加VPN设置；
+
+　　2，添加VPN地址、VPN帐号和VPN密码；
+
+　　3，点击存储，打开VPN开关，看到手机顶部显示有VPN字样就代表连上啦。
+
+　　Android手机VPN设置
+
+　　1，点击设置-更多；
+
+　　2，点击VPN，选择右上角的加号添加VPN；
+
+　　3，添加VPN地址、VPN帐号和VPN密码；名称随便填，服务器地址就是在VPN所找到的服务器主机名或者IP地址，填好后点保存；点击刚刚保存的VPN，弹出菜单，填写用户名和密码，勾选保存账户信息，点击连接；　　4，左上角出现一个钥匙标记也表明vpn连接成功了，点击刚刚的vpn账号可以随时断开连接，长按则可以修改刚刚的设置。
+
+ 
+4.3      搭建VPN服务器
+之前用Bandwagon（搬瓦工）搭的Shadowsocks，实现上也可以用这个搭VPN。重点讲差别的地方。
+Bandwagon虽然也提供了一键安装OpenVPN功能，不过据说使用OpenVPN之后，有很大概率让你的IP被GFW加入豪华午餐，所以还是建议大家自行安装PPTP VPN（Bandwagon貌似不支持L2TP），网上有一键安装的脚本。
+安装PPTP VPN需要开启PPP；安装OpenVPN需要开启TUN。
+检测PPP是否开启，命令# cat /dev/ppp
+开启成功的标志：cat: /dev/ppp: No such file or directory 或者 cat: /dev/ppp: No such device or address，可以继续安装过程；
+开启不成功的标志：cat: /dev/ppp: Permission denied，请联系服务商开启。
+成功开启PPP以后，就可以安装了。
+用6可以顺便装上Shadowsocks,用5可以装网页管理系统(Freeradius + Mysql)
+ 
+1. wget http://down.topmyhosting.com/vpn/openvps_vpn_centos-5-6.sh
+2. chmod a+x openvps_vpn_centos-5-6.sh
+3. sh openvps_vpn_centos-5-6.sh
+ 
+安装方法二：
+CentOS6
+1. wget http://www.72yun.com/shell/vpn_centos6.sh
+2. chmod a+x vpn_centos6.sh
+3. bash vpn_centos6.sh
+ 
+安装方法三：
+wget http://www.hi-vps.com/shell/vpn_centos6.sh
+sh vpn_centos6.sh
+ 
+ 
+PPTP VPN用户管理
+用脚本自动安装后会有一个默认的vpn账户，如果你想添加多个用户时，可以在ssh中输入：
+vim /etc/ppp/chap-secrets
+
+以user pptpd pass *为格式输入。
+按i可以进入输入修改状态噢！
+ 
+注：VPN的方案我目前还没有试过。这些供参考。另外，网上还有推荐其他的VPN方案，供参考：
+bandwagonhost.com 上的 pptp vpn 最好用他们提供的debian7.0 x86 这个系统。而他们提供的centos镜像很难装的pptp的，推荐搜索debian + pptp 安装资料,基本全程apt-get 再修改配置文档就搞好了。openvpn是安全、但必须要改端口为443 tcp协议～要不然很容易被封ip2天～
+bandwagon centos 7上各种 pptpd, strongswan, openvpn sk, shadowsocks, ocserv 运行得很酸爽啊. 就是重装一次要快1个小时了
+使用Strongswan搭建IPSec/IKEv2 VPN
+（http://hjc.im/shi-yong-strongswanda-jian-ipsecikev2-vpn/）
