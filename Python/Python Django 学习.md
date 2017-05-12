@@ -13,6 +13,7 @@
 
 ## 使用Django
 
-
+### CentOS上安装django
+1. 
 
 
